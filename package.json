@@ -10,7 +10,8 @@
 	"keywords": [
 		"videos",
 		"stream",
-		"v'projects"
+		"v'projects",
+		"v'gangs"
 	],
 	"author": "Koo Kuu",
 	"license": "ISC",
@@ -30,5 +31,13 @@
 	},
 	"devDependencies": {
 		"nodemon": "^2.0.12"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/vinhngo1907/v-radio.git"
+	},
+	"bugs": {
+		"url": "https://github.com/vinhngo1907/v-radio/issues"
+	},
+	"homepage": "https://github.com/vinhngo1907/v-radio#readme"
 }
