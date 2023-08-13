@@ -5,7 +5,7 @@ const { CLIENT_URL, NODE_ENV, MONGO_URI, PORT, BASE_URL, AUTH0_DOMAIN, CLIENT_ID
 
 const config = {
     NODE_ENV: NODE_ENV || 'dev',
-    MONGO_URI: MONGO_URI || 'mongodb://localhost:27017/Radio',
+    MONGO_URI: MONGO_URI || 'mongodb://localhost:27017/v-radio',
     PORT: PORT || 4000,
     BASE_URL: BASE_URL || `http://localhost:${PORT || 4000}`,
     AUTH0_DOMAIN: AUTH0_DOMAIN || 'test',
