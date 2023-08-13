@@ -17,6 +17,7 @@ const config = {
 }
 
 function get(key) {
-    return config[key].toUpperCase();
+    return config[key.toUpperCase()];
 }
+
 export default get;

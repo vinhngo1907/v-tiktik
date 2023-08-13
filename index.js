@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import get from "./src/configs/env.config";
-import { connectDB } from "./src/configs/db.config";
+import get from "./src/configs/env.config.js";
+import { connectDB } from "./src/configs/db.config.js";
 import moment from "moment";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -27,7 +27,9 @@ app.use(cors());
 // connect DB
 connectDB();
 
+// start app
 const port = get('port');
-httpServer.listen(port, () => `Server started on ${port}`);
+
+httpServer.listen(port, () => console.log(`Server start at port ${port}`));
 
 export default io;

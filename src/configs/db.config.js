@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import get from "./env.config";
+import get from "./env.config.js";
 Promise = global.Promise;
 
 const uri = get("mongo_uri");
