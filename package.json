@@ -10,8 +10,12 @@
 		"start": "node index.js"
 	},
 	"keywords": [
-		"videos",
-		"stream",
+		"video",
+		"videojs",
+		"video.js",
+		"vjs",
+		"YouTube",
+		"tech",
 		"v's projects",
 		"v's gang"
 	],
