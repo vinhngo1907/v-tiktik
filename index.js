@@ -6,7 +6,10 @@ import moment from "moment";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { handleError, handleNotFoundPage } from "./src/middlewares/error.middlware.js";
-import webRoute from "./src/routes/index.js";
+import morgan from 'morgan';
+import { join } from 'path';
+import userRoute from "./src/routes/user.route.js";
+import rfs from 'rotating-file-stream';
 
 const config = {
     authRequired: false,
@@ -17,6 +20,9 @@ const config = {
     secret: get('secret'),
 }
 
+// configure isProduction variable
+const isProduction = process.env.NODE_ENV === 'production';
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
@@ -26,6 +32,15 @@ app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
+// create a rotating write stream
+// const accessLogStream = rfs('access.log', {
+//     interval: '1d', // rotate daily
+//     path: join(__dirname, 'log'),
+// });
+
+// adding morgan to log HTTP requests
+// app.use(isProduction ? morgan('combined', { stream: accessLogStream }) : morgan('dev'));
+
 // connect DB
 connectDB();
 
@@ -34,32 +49,31 @@ app.get('/', (req, res) => {
     res.send('App works!!!!!');
 });
 
-app.use('/api', webRoute.default);
+app.use('/user', userRoute());
 
 // request to handle undefined or all other routes
 app.get('*', (req, res) => {
-    logger.info('GET undefined routes');
+    // logger.info('GET undefined routes');
     res.send('App works!!!!!');
 });
-
 
 // handler error
 app.use(handleNotFoundPage);
 app.use(handleError);
 
 // Error handlers & middlewares
-// if (!isProduction) {
-//     app.use((err, req, res) => {
-//         res.status(err.status || 500);
+if (!isProduction) {
+    app.use((err, req, res) => {
+        res.status(err.status || 500);
 
-//         res.json({
-//             errors: {
-//                 message: err.message,
-//                 error: err,
-//             },
-//         });
-//     });
-// }
+        res.json({
+            errors: {
+                message: err.message,
+                error: err,
+            },
+        });
+    });
+}
 
 app.use((err, req, res) => {
     res.status(err.status || 500);
@@ -71,6 +85,7 @@ app.use((err, req, res) => {
         },
     });
 });
+
 // start app
 const port = get('port');
 
