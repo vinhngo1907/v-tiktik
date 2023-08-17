@@ -10,6 +10,7 @@ const mongoConfig = {
     ignoreUndefined: true,
 };
 
+mongoose.set("strictQuery", false);
 
 export const connectDB = async () => {
     try {
