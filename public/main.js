@@ -6,19 +6,23 @@ const updateUI = async () => {
 
     try {
         const response = await axios.get("/user/me");
-        const { nickname, picture, email } = response.data;
+        const { nickname, picture, email: userEmail, id } = response.data;
+        window.email = userEmail;
+        window.userId = id;
+        
         const isAuthenticated = nickname && email;
         document.getElementById("btn-login").style.display = isAuthenticated ? "none" : "block";
         document.getElementsByClassName("user-profile")[0].style.display = isAuthenticated ? "block" : "none";
-        if (nickname && email) {
+        if (nickname && picture) {
             fullName.innerHTML = nickname;
-            avatar.src = avatar;
+            avatar.src = picture;
+
             fullName.style.visibility = "visible";
             avatar.style.visibility = "visible";
         }
     } catch (error) {
         document.getElementsByClassName("user-profile")[0].style.display = 'none';
-        console.log(error.message);
+        // console.log(error.message);
     }
 
     (localStorage.getItem('theme') === 'dark-mode') ? setTheme('dark-mode') : setTheme("light-mode");
@@ -33,7 +37,7 @@ function setTheme(themeName) {
 }
 
 function toggleTheme() {
-    (localStorage.getItem("theme") === "dark-mode") ? setTheme("dark-mode") : setTheme("light-mode");
+    (localStorage.getItem("theme") === "light-mode") ? setTheme("dark-mode") : setTheme("light-mode");
     setLogo();
 }
 
