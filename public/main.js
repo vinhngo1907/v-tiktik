@@ -20,6 +20,33 @@ const updateUI = async () => {
         document.getElementsByClassName("user-profile")[0].style.display = 'none';
         console.log(error.message);
     }
+
+    (localStorage.getItem('theme') === 'dark-mode') ? setTheme('dark-mode') : setTheme("light-mode");
+    setLogo();
 }
 
 updateUI();
+
+function setTheme(themeName) {
+    localStorage.setItem('theme', themeName);
+    document.documentElement.className = themeName;
+}
+
+function toggleTheme() {
+    (localStorage.getItem("theme") === "dark-mode") ? setTheme("dark-mode") : setTheme("light-mode");
+    setLogo();
+}
+
+function setLogo() {
+    const navBrand = document.getElementsByClassName("navbar-brand")[0];
+    if (localStorage.getItem("theme") === "light-mode") {
+        navBrand.innerHTML = `
+            <img src='https://res.cloudinary.com/v-webdev/image/upload/v1683379129/test/BT_Logo_Gold_4x_sqr75j.png' alt="logo" width="80" 
+            height="80" />
+        `;
+    } else {
+        navBrand.innerHTML = `
+        <img src="https://res.cloudinary.com/v-webdev/image/upload/v1683379366/test/bt3_bkcnhc.png" alt="logo" width="80" height="80"/>
+        `;
+    }
+}
