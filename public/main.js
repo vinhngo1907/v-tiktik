@@ -45,12 +45,12 @@ function setLogo() {
     const navBrand = document.getElementsByClassName("navbar-brand")[0];
     if (localStorage.getItem("theme") === "light-mode") {
         navBrand.innerHTML = `
-            <img src='https://res.cloudinary.com/v-webdev/image/upload/v1683379129/test/BT_Logo_Gold_4x_sqr75j.png' alt="logo" width="80" 
+            <img src='./images/BT Logo Gold@4x.png' alt="logo" width="80" 
             height="80" />
         `;
     } else {
         navBrand.innerHTML = `
-        <img src="https://res.cloudinary.com/v-webdev/image/upload/v1683379366/test/bt3_bkcnhc.png" alt="logo" width="80" height="80"/>
+        <img src="./images/Artboard 1@4x.png" alt="logo" width="80" height="80"/>
         `;
     }
 }
