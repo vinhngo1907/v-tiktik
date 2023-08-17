@@ -1,4 +1,4 @@
-import { APIError } from "../utils/error.util.js";
+import { APIError } from "../utils/error.util";
 const ObjectId = require("mongoose").Types.ObjectId;
 
 const checkReqParam = (req, res, next) => {
