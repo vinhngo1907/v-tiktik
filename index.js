@@ -5,6 +5,7 @@ import { connectDB } from "./src/configs/db.config.js";
 import moment from "moment";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { handleError, handleNotFoundPage } from "./src/middlewares/error.middlware.js";
 
 const config = {
     authRequired: false,
@@ -26,6 +27,10 @@ app.use(cors());
 
 // connect DB
 connectDB();
+
+// handler error
+app.use(handleNotFoundPage);
+app.use(handleError);
 
 // start app
 const port = get('port');
