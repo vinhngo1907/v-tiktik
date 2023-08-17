@@ -6,6 +6,7 @@ import moment from "moment";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { handleError, handleNotFoundPage } from "./src/middlewares/error.middlware.js";
+import webRoute from "./src/routes/index.js";
 
 const config = {
     authRequired: false,
@@ -28,10 +29,48 @@ app.use(cors());
 // connect DB
 connectDB();
 
+app.get('/', (req, res) => {
+    logger.info('GET /');
+    res.send('App works!!!!!');
+});
+
+app.use('/api', webRoute.default);
+
+// request to handle undefined or all other routes
+app.get('*', (req, res) => {
+    logger.info('GET undefined routes');
+    res.send('App works!!!!!');
+});
+
+
 // handler error
 app.use(handleNotFoundPage);
 app.use(handleError);
 
+// Error handlers & middlewares
+// if (!isProduction) {
+//     app.use((err, req, res) => {
+//         res.status(err.status || 500);
+
+//         res.json({
+//             errors: {
+//                 message: err.message,
+//                 error: err,
+//             },
+//         });
+//     });
+// }
+
+app.use((err, req, res) => {
+    res.status(err.status || 500);
+
+    res.json({
+        errors: {
+            message: err.message,
+            error: {},
+        },
+    });
+});
 // start app
 const port = get('port');
 
