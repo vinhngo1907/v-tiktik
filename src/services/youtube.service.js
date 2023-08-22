@@ -1,6 +1,6 @@
 import axios from "axios";
 import youtubeSearchApi from "youtube-search-api";
-import get from "../configs/env.config";
+import get from "../configs/env.config.js";
 const YOUTUBE_API_URL = get('youtube_api_url');
 const YOUTUBE_API_KEY = get('youtube_api_key');
 
@@ -20,6 +20,16 @@ export async function getYoutubeVideo(youtubeVideoId) {
             duration: extractDurationFromYoutube(duration)
         };
     } catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+}
 
+export function searchYoutube(keyword){
+    try {
+        
+    } catch (error) {
+        console.error(error.message);
+        throw error;
     }
 }

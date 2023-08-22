@@ -24,6 +24,7 @@ export function getAll() {
     try {
         return songsForQueue;
     } catch (error) {
+        console.error(error.message);
         throw error;
     }
 }
@@ -32,6 +33,23 @@ export async function createVideo(youtubeVideoId, authorEmail) {
     try {
         const { title, thumbnailUrl, duration } = await getYoutubeVideo(youtubeVideoId);
         const user = await UserModel.findOne({ email: authorEmail });
+        const newVideo = await VideoModel.create({
+            title, youtubeVideoId, user, duration, thumbnailUrl,
+            user: {
+                _id: user._id,
+                nickname: user.nickname
+            }
+        });
+
+        otherSongs.push({
+            ...newVideo._doc,
+            user: {
+                _id: user._id,
+                nickname: user.nickname
+            }
+        });
+
+        io.emit("other-tracks-update", otherSongs);
     } catch (error) {
         console.log(error.message);
         throw error;
