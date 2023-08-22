@@ -64,7 +64,7 @@ function doUpdateAnaly() {
     gtag('config', 'G-WJCH2J19N3');
 }
 
-function updateCount(id, likes, dislikes, eleId){
+function updateCount(id, likes, dislikes, eleId) {
 
 }
 
@@ -97,4 +97,8 @@ socket.on("playingVideo", async (data) => {
     document.getElementById("titlePlayingVideo").innerHTML = `${data.playingVideo.title}`;
     // updateCount(data.playingVideo._id, data.playingVideo.likes, data.playingVideo.dislikes);
     renderTracks(window.videoList, 'queueTracks');
+});
+
+socket.on("other-tracks-update", async (tracks) => {
+    renderTracks(tracks, 'other-tracks');
 });
