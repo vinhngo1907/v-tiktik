@@ -1,9 +1,9 @@
 import {
     getVideoById, getAll as _getAll,
     createVideo as _createVideo,
-    deleteVideo as _deleteVideo
-
+    deleteVideo as _deleteVideo,
 } from "../services/video.service.js";
+import { searchYoutube as _searchYoutube } from '../services/youtube.service.js';
 
 export async function getById(req, res, next) {
     try {
@@ -42,6 +42,17 @@ export async function deleteVideo(req, res, next) {
 
         const videoId = req.params.id;
         return await _deleteVideo(videoId);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function searchYoutube(req, res, next) {
+    try {
+        const keyword = req.query.keyword;
+        if (!keyword) return res.json([]);
+        const videos = await _searchYoutube(keyword);
+        return res.json(videos);
     } catch (error) {
         next(error);
     }
