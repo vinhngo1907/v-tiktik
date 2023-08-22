@@ -54,3 +54,8 @@ function setLogo() {
         `;
     }
 }
+
+var socket = io ();
+socket.on("other-upadte-tracks", (tracks) => {
+    window.videoList = tracks;
+});
