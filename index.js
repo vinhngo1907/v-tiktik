@@ -12,6 +12,7 @@ import oidc from 'express-openid-connect';
 import * as fs from 'fs';
 const auth = oidc.auth;
 import moment from "moment";
+import { getTracksInQueue } from "./src/services/video.service.js";
 
 const config = {
     authRequired: false,
@@ -28,8 +29,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
-io.on("connection", () => {
-    const tracks = getTrac
+io.on("connection", (client) => {
+    const tracks = getTracksInQueue();
+    client.emit("update-tracks", tracks);
 })
 
 app.use(express.json());

@@ -65,3 +65,7 @@ export async function deleteVideo(id) {
 
     }
 }
+
+export function getTracksInQueue() {
+    return songsForQueue;
+}

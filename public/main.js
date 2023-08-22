@@ -9,7 +9,7 @@ const updateUI = async () => {
         const { nickname, picture, email: userEmail, id } = response.data;
         window.email = userEmail;
         window.userId = id;
-        
+
         const isAuthenticated = nickname && email;
         document.getElementById("btn-login").style.display = isAuthenticated ? "none" : "block";
         document.getElementsByClassName("user-profile")[0].style.display = isAuthenticated ? "block" : "none";
@@ -55,7 +55,46 @@ function setLogo() {
     }
 }
 
-var socket = io ();
-socket.on("other-upadte-tracks", (tracks) => {
+function doUpdateAnaly() {
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-WJCH2J19N3');
+}
+
+function updateCount(id, likes, dislikes, eleId){
+
+}
+
+var socket = io();
+socket.on("update-tracks", (tracks) => {
     window.videoList = tracks;
+});
+socket.on("playingVideo", async (data) => {
+    doUpdateAnaly();
+    if (player === null || player === undefined) {
+        player = new YT.Player('videoPlaying', {
+            height: '390',
+            width: '640',
+            videoId: `${data.playingVideo.youtubeVideoId}`,
+            enablejsapi: 1,
+            playerVars: {
+                'autoplay': 1,
+                'controls': 0,
+                'mute': 1,
+                'start': `${data.playedTime}`,
+            },
+            events: {
+                'onReady': onPlayerReady,
+            }
+        });
+    } else {
+        player.loadVideoById(`${data.playingVideo.youtubeVideoId}`);
+    }
+    window.playingVideo = data.playingVideo;
+    document.getElementById("titlePlayingVideo").innerHTML = `${data.playingVideo.title}`;
+    // updateCount(data.playingVideo._id, data.playingVideo.likes, data.playingVideo.dislikes);
+    renderTracks(window.videoList, 'queueTracks');
 });
