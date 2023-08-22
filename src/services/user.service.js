@@ -1,4 +1,4 @@
-import { UserModel } from "../models/index.js";
+import UserModel from '../models/user.model.js';
 
 export const createOrUpdateUser = async (nickname, email, picture) => {
     try {

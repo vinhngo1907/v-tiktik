@@ -1,4 +1,8 @@
-import { getVideoById, getAll as _getAll } from "../services/video.service.js";
+import {
+    getVideoById, getAll as _getAll,
+    createVideo as _createVideo
+
+} from "../services/video.service.js";
 
 export async function getById(req, res, next) {
     try {
@@ -19,9 +23,10 @@ export async function getAll(req, res, next) {
     }
 }
 
-export async function createVideo(){
+export async function createVideo(req, res, next) {
     try {
-        
+        const video = await _createVideo(req.body.yotubeVideoId, req.oidc.user.email);
+        return res.json(video);
     } catch (error) {
         next(error);
     }

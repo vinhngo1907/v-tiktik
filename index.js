@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import { handleError, handleNotFoundPage } from "./src/middlewares/error.middlware.js";
 import morgan from 'morgan';
 import userRoute from "./src/routes/user.route.js";
+import videoRoutes from "./src/routes/video.route.js";
 import oidc from 'express-openid-connect';
 import * as fs from 'fs';
 const auth = oidc.auth;
@@ -27,6 +28,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+io.on("connection", () => {
+    const tracks = getTrac
+})
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -44,6 +48,7 @@ app.get('/', (req, res) => {
 });
 
 // Config routes
+app.use('/video', videoRoutes());
 app.use('/user', userRoute());
 
 app.get("/login", (req, res) => {

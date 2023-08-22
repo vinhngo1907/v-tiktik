@@ -1,4 +1,4 @@
-import { VideoModel } from "../models/index.js";
+import VideoModel from '../models/video.model.js';
 import Queue from "../utils/queue.util.js";
 import io from "../../index.js";
 
@@ -22,6 +22,15 @@ export function getAll(){
     try {
         return songsForQueue;
     } catch (error) {
+        throw error;
+    }
+}
+
+export async function createVideo(youtubeVideoId, authorEmail){
+    try {
+        
+    } catch (error) {
+        console.log(error.message);
         throw error;
     }
 }
