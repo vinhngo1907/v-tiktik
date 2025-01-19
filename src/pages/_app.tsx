@@ -1,23 +1,37 @@
-import { AppType } from "next/dist/shared/lib/utils";
-import Head from "next/head";
-import { Toaster } from "react-hot-toast";
-import "~/styles/global.css";
-
-import type { AppRouter } from "@/server/router";
+// import "@styles/global.css";
 import { withTRPC } from "@trpc/next";
-import SuperJSON from "superjson";
+import type { AppType } from "next/dist/shared/lib/utils";
+import Head from "next/head";
+import { SessionProvider } from "next-auth/react";
+import NextNProgress from "nextjs-progressbar";
+import { Toaster } from "react-hot-toast";
+import superjson from "superjson";
+
+// import VolumeContextProvider from "@/context/VolumeContext";
+
+import type { AppRouter } from "../server/router";
+import { AppProps } from "next/app";
 
 const MyApp: AppType = ({
     Component,
     pageProps: { session, ...pageProps },
-}) => {
+}: AppProps) => {
     return (
         <>
-            {/* <Head><link rel="shortcut icon" href="/favicon.png" type="image/x-icon" /></Head>
-            <Toaster /> */}
+            <Head>
+                <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
+            </Head>
+            <Toaster />
+            <NextNProgress color="#FE2C55" options={{ showSpinner: false }} />
+            <SessionProvider session={session}>
+                <Component {...pageProps} />
+                {/* <VolumeContextProvider>
+          <Component {...pageProps} />
+        </VolumeContextProvider> */}
+            </SessionProvider>
         </>
-    )
-}
+    );
+};
 
 const getBaseUrl = () => {
     if (typeof window !== "undefined") {
@@ -35,7 +49,7 @@ export default withTRPC<AppRouter>({
 
         return {
             url,
-            transformer: SuperJSON,
+            transformer: superjson,
         };
     },
     ssr: false,
