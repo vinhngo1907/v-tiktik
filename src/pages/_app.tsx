@@ -1,7 +1,7 @@
 import { AppType } from "next/dist/shared/lib/utils";
 import Head from "next/head";
 import { Toaster } from "react-hot-toast";
-import "~/styles/globals.css";
+import "~/styles/global.css";
 
 import type { AppRouter } from "@/server/router";
 import { withTRPC } from "@trpc/next";
