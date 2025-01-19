@@ -1,108 +1,109 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider     = "postgresql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
-
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    token_type        String?
-    expires_at        Int?
-    scope             String?
-    id_token          String?
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  token_type        String?
+  expires_at        Int?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    videos        Video[]
-    likes         Like[]
-    comments      Comment[]
-    followers     Follow[]  @relation("followings")
-    followings    Follow[]  @relation("followers")
-
-    // @@fulltext([name, email])
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  videos        Video[]
+  likes         Like[]
+  comments      Comment[]
+  followers     Follow[]  @relation("followings")
+  followings    Follow[]  @relation("followers")
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Follow {
-    followerId  String
-    followingId String
-    follower    User   @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
-    following   User   @relation("followings", fields: [followingId], references: [id], onDelete: Cascade)
+  followerId  String
+  followingId String
+  follower    User   @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User   @relation("followings", fields: [followingId], references: [id], onDelete: Cascade)
 
-    @@id([followingId, followerId])
+  @@id([followingId, followerId])
 }
 
 model VericationToken {
-    identifier String
-    token      String @unique
+  identifier String
+  token      String @unique
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
 
 model Video {
-    id          String    @id @default(cuid())
-    caption     String    @db.Text
-    videoUrl    String    @db.Text
-    coverUrl    String    @db.Text
-    videoWidth  Int
-    videoHeight Int
-    userId      String
-    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    likes       Like[]
-    comments    Comment[]
-
-    // @@fulltext([caption])
+  id          String    @id @default(cuid())
+  caption     String
+  videoUrl    String
+  coverUrl    String
+  videoWidth  Int
+  videoHeight Int
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes       Like[]
+  comments    Comment[]
 }
 
 model Like {
-    userId  String
-    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    videoId String
-    video   Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  userId  String
+  videoId String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video   Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
 
-    @@id([videoId, userId])
+  @@id([videoId, userId])
 }
 
 model Comment {
-    id        String   @id @default(cuid())
-    videoId   String
-    video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  videoId   String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+nces: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+nces: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+nces: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

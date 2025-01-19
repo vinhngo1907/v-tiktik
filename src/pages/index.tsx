@@ -8,7 +8,7 @@ import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Home/Sidebar";
 import { appRouter } from "@/server/router";
 import superjson from "superjson";
-import { unstable_getServerSession as getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 
 type HomeProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 const Home: NextPage<HomeProps> = ({

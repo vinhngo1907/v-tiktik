@@ -28,14 +28,14 @@ export const videoRouter = createRouter()
                     prisma.like.findMany({
                         where: {
                             userId: session?.user?.id,
-                            videoId: { in: items.map((item) => item.id) },
+                            videoId: { in: items.map((item: any) => item.id) },
                         },
                     }),
                     prisma.follow.findMany({
                         where: {
                             followerId: session.user.id,
                             followingId: {
-                                in: items.map((item) => item.userId),
+                                in: items.map((item: any) => item.userId),
                             },
                         },
                     }),
@@ -43,7 +43,7 @@ export const videoRouter = createRouter()
             }
 
             return {
-                items: items.map((item) => ({
+                items: items.map((item: any) => ({
                     ...item,
                     likedByMe: likes.some(l => l.videoId === item.id),
                     followedByMe: followings.some(f => f.followingId === item.userId),
