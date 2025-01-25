@@ -10,6 +10,13 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            }
         }),
         //   FacebookProvider({
         //     clientId: process.env.FACEBOOK_APP_ID!,
@@ -18,11 +25,13 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         session: async ({ session, token }) => {
+
             if (session?.user) {
                 // @ts-ignore
                 session.user.id = token.uid;
             }
-            return session;
+            // return session;
+            return Promise.resolve(session)
         },
         jwt: async ({ user, token }) => {
             if (user) {
@@ -37,7 +46,7 @@ export const authOptions: NextAuthOptions = {
     pages: {
         signIn: "/sign-in",
         error: "/sign-in"
-    }
+    },
 }
 
 export default NextAuth(authOptions);

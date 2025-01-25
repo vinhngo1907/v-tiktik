@@ -1,12 +1,14 @@
 import Navbar from "@/components/Layout/Navbar";
 import Meta from "@/components/Shared/Meta";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { BsFacebook } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { unstable_getServerSession as getServerSession } from "next-auth";
 
 const SignIn: NextPage = () => {
     const router = useRouter();
@@ -14,18 +16,33 @@ const SignIn: NextPage = () => {
 
     useEffect(() => {
         if (error) {
+            const errors: { [key: string]: string } = {
+                Signin: "Try signing with a different account",
+                OAuthSignin: "Try signing with a different account",
+                OAuthCallback: "Try signing with a different account",
+                OAuthCreateAccount: "Try signing with a different account",
+                EmailCreateAccount: "Try signing with a different account",
+                Callback: "Try signing with a different account",
+                OAuthAccountNotLinked: "Email is connected with another provider",
+                EmailSignin: "Check your email address",
+                CredentialsSignin: "Sign in failed. The credentials are incorrect",
+            };
 
+            toast.error(errors[error] || "Unable to sign in", {
+                position: "bottom-right",
+            });
         }
     }, [error]);
 
     const handleSignIn = (provider: string) => {
-        signIn(provider).catch((err: any) => {
-            console.error(err);
+        signIn(provider).catch((err) => {
+            console.log(err);
             toast.error(`Unable to sign in with ${provider}`, {
-                position: "bottom-right"
+                position: "bottom-right",
             });
         });
-    }
+    };
+
 
     return (
         <>
@@ -40,7 +57,7 @@ const SignIn: NextPage = () => {
                         Manage your account, check notifications, comment on videos, and
                         more.
                     </p>
-                    <button onClick={() => handleSignIn("goggle")}
+                    <button onClick={() => handleSignIn("google")}
                         className="w-[95vw] max-w-[375px] flex justify-center items-center relative border border-gray-200 hover:border-gray-400 transition h-11"
                     >
                         <span>Continue with Google</span>
@@ -59,3 +76,23 @@ const SignIn: NextPage = () => {
 }
 
 export default SignIn;
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+    const session = await getServerSession(req, res, authOptions);
+
+    if (session?.user) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: true,
+            },
+            props: {},
+        };
+    }
+
+    return {
+        props: {
+            session,
+        },
+    };
+};
