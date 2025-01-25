@@ -9,13 +9,13 @@ import superjson from "superjson";
 
 // import VolumeContextProvider from "@/context/VolumeContext";
 
-import { AppProps } from "next/app";
+// import { AppProps } from "next/app";
 import { AppRouter } from "@/server/router";
 
 const MyApp: AppType = ({
     Component,
     pageProps: { session, ...pageProps },
-}: AppProps) => {
+}) => {
     return (
         <>
             <Head>

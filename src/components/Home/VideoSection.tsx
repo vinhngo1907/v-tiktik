@@ -19,7 +19,7 @@ interface VideoSectionProps {
 }
 const VideoSection : FC<VideoSectionProps> = ({video, refetch, origin}) =>{
     const session = useSession();
-    // const likeMution = trpc.useMutation("like.toggle");
+    const likeMutation = trpc.useMutation("like.toggle");
     const followMution = trpc.useMutation("follow.toggle");
 
     const videoURL = `${origin}/video/${video.id}`;
