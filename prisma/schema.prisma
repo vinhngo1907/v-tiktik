@@ -68,8 +68,8 @@ model VericationToken {
 model Video {
   id          String    @id @default(cuid())
   caption     String
-  videoUrl    String
-  coverUrl    String
+  videoURL    String
+  coverURL    String
   videoWidth  Int
   videoHeight Int
   userId      String
@@ -90,11 +90,11 @@ model Like {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  videoId   String
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  videoId     String
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  video       Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

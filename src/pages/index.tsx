@@ -24,14 +24,13 @@ const Home: NextPage<HomeProps> = ({
                 image="/favicon.png"
             />
             <Navbar />
-            Home Page
             <div className="flex justify-center mx-4">
                 <div className="w-full max-w-[1150px] flex">
                     <Sidebar
                         suggestedAccounts={suggestedAccounts!}
                         followingAccounts={followingAccounts!}
                     />
-
+                    <Main origin={origin!} />
                 </div>
             </div>
         </>
@@ -82,13 +81,13 @@ export const getServerSideProps = async ({ req, res, query }: GetServerSideProps
             ? prisma.follow.findMany({
                 where: {
                     //@ts-ignore
-                    followerId: session?.user?.id,
+                    followerId: session?.user?.id!,
                 }
             })
             : Promise.resolve([]),
-        // isFetchingFollowing
-        //     ? ssg.fetchInfiniteQuery("video.following", {})
-        //     : ssg.fetchInfiniteQuery("video.for-you"),
+        isFetchingFollowing
+            ? ssg.fetchInfiniteQuery("video.following", {})
+            : ssg.fetchInfiniteQuery("video.for-you", {}),
     ]);
 
     return {
@@ -97,7 +96,8 @@ export const getServerSideProps = async ({ req, res, query }: GetServerSideProps
             suggestedAccounts,
             session,
             followingAccounts: followingAccounts.map((item: any) => item.following),
-            origin: `${req.headers.host?.includes("localhost") ? "http" : "https"
+            origin: `${req.headers.host?.includes("localhost")
+                ? "http" : "https"
                 }://${req.headers.host}`
         }
     }

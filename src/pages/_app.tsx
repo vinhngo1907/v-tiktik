@@ -1,4 +1,4 @@
-// import "@styles/global.css";
+import "../styles/global.css";
 import { withTRPC } from "@trpc/next";
 import type { AppType } from "next/dist/shared/lib/utils";
 import Head from "next/head";
@@ -9,8 +9,8 @@ import superjson from "superjson";
 
 // import VolumeContextProvider from "@/context/VolumeContext";
 
-import type { AppRouter } from "../server/router";
 import { AppProps } from "next/app";
+import { AppRouter } from "@/server/router";
 
 const MyApp: AppType = ({
     Component,

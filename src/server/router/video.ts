@@ -6,7 +6,7 @@ import { createRouter } from "./context";
 import { Follow, Like } from "@prisma/client";
 
 export const videoRouter = createRouter()
-    .query("video.for-you", {
+    .query("for-you", {
         input: z.object({ cursor: z.number().nullish(), }),
         resolve: async ({ ctx: { prisma, session }, input }) => {
             const skip = input.cursor || 0;
@@ -54,7 +54,83 @@ export const videoRouter = createRouter()
     })
     .middleware(async ({ ctx, next }) => {
         if (!ctx.session) {
-            throw Error("");
+            throw new TRPCError({ code: "UNAUTHORIZED" });
         }
         return next();
+    }).query("following", {
+        input: z.object({
+            cursor: z.number().nullish(),
+        }),
+        resolve: async ({ ctx: { prisma, session }, input }) => {
+            const followingIds = (
+                await prisma.follow.findMany({
+                    where: {
+                        followerId: session?.user?.id!,
+                    },
+                    select: {
+                        followingId: true,
+                    },
+                })
+            ).map(f => f.followingId);
+
+            const skip = input.cursor || 0;
+            const videos = await prisma.video.findMany({
+                take: 10,
+                skip,
+                where: {
+                    userId: { in: followingIds },
+                },
+                include: {
+                    user: true,
+                    _count: { select: { likes: true, comments: true } },
+                },
+                orderBy: {
+                    createdAt: "desc"
+                },
+            });
+
+            let likes: Like[] = [];
+            let followings: Follow[] = [];
+            [likes, followings] = await Promise.all([
+                prisma.like.findMany({
+                    where: {
+                        userId: session?.user?.id!,
+                        videoId: { in: videos.map(v => v.id) }
+                    },
+                }),
+                prisma.follow.findMany({
+                    where: {
+                        followerId: session?.user?.id!,
+                        followingId: { in: videos.map(v => v.userId) }
+                    }
+                })
+            ]);
+
+            return {
+                items: videos.map(v => ({
+                    ...v,
+                    likedByMe: likes.some(l => l.videoId === v.id),
+                    followedByMe: followingIds.some(f => f === v.userId)
+                })),
+                nextSkip: videos.length === 0 ? null : skip + 1,
+            };
+        },
+    })
+    .mutation("create", {
+        input: z.object({
+            caption: z.string(),
+            videoURL: z.string().url(),
+            coverURL: z.string().url(),
+            videoWidth: z.number().gt(0),
+            videoHeight: z.number().gt(0),
+        }),
+        async resolve({ ctx: { prisma, session }, input }) {
+            const created = await prisma.video.create({
+                data: {
+                    ...input,
+                    userId: session?.user?.id!,
+                },
+            });
+            return created;
+        }
     });
