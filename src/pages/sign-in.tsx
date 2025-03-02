@@ -43,7 +43,6 @@ const SignIn: NextPage = () => {
         });
     };
 
-
     return (
         <>
             <Meta title="Log in | TopTop" description="Log in" image="/favicon.png" />
