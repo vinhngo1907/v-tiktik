@@ -11,6 +11,7 @@ import superjson from "superjson";
 
 // import { AppProps } from "next/app";
 import { AppRouter } from "@/server/router";
+import VolumeContextProvider from "@/context/VolumeContext";
 
 const MyApp: AppType = ({
     Component,
@@ -25,9 +26,9 @@ const MyApp: AppType = ({
             <NextNProgress color="#FE2C55" options={{ showSpinner: false }} />
             <SessionProvider session={session}>
                 <Component {...pageProps} />
-                {/* <VolumeContextProvider>
-          <Component {...pageProps} />
-        </VolumeContextProvider> */}
+                <VolumeContextProvider>
+                    <Component {...pageProps} />
+                </VolumeContextProvider>
             </SessionProvider>
         </>
     );
