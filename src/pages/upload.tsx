@@ -3,8 +3,9 @@ import Meta from "@/components/Shared/Meta";
 import { trpc } from "@/utils/trpc";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { DragEventHandler, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { BsFillCloudUploadFill } from "react-icons/bs";
 
 const Upload: NextPage = () => {
     const router = useRouter();
@@ -104,6 +105,34 @@ const Upload: NextPage = () => {
             });
         }
     }
+
+    const dropFile = (e: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let files = e.dataTransfer.files;
+
+        if (files.length > 1) {
+            toast("Only one file is allowed");
+        } else {
+            handleFileChange(files[0]);
+        }
+
+        setIsFileDragging(false);
+    }
+
+    const dragFocus: DragEventHandler<HTMLButtonElement> = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsFileDragging(true);
+    }
+
+    const dragBlur: DragEventHandler<HTMLButtonElement> = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsFileDragging(false);
+    };
+
     return (
         <>
             <Meta title="Upload | TopTop" description="Upload" image="/favicon.png" />
@@ -111,6 +140,7 @@ const Upload: NextPage = () => {
                 <Navbar />
                 <div className="flex justify-center mx-2 flex-grow bg-gray-1">
                     <div className="w-full max-w-[1000px] p-8 bg-white my-4">
+                        <BsFillCloudUploadFill className="fill-[#B0B0B4] w-10 h-10" />
                         <h1 className="text-2xl font-bold">Upload video</h1>
                         <p className="text-gray-400 mt-2">Post a video to your account</p>
                         <div className="flex items-start mt-10 gap-4">
@@ -125,7 +155,15 @@ const Upload: NextPage = () => {
                                         playsInline
                                     />
                                 ) : (
-                                    <button>
+                                    <button
+                                        onDrop={dropFile}
+                                        onDragLeave={dragBlur}
+                                        onDragEnter={dragFocus}
+                                        onDragOver={dragFocus}
+                                        onClick={() => inputRef.current?.click()}
+                                        className={`w-[250px] flex-shrink-0 border-2 border-gray-300 rounded-md border-dashed flex flex-col items-center p-8 cursor-pointer hover:border-red-1 transition ${isFileDragging ? "border-red-1" : ""
+                                            }`}
+                                    >
                                         <h1 className="font-semibold mt-4 mb-2">
                                             Select video to upload
                                         </h1>
@@ -149,7 +187,11 @@ const Upload: NextPage = () => {
 
                             <input
                                 type="file" hidden className="hidden" accept="video/mp4,video/webm"
-
+                                onChange={(e) => {
+                                    if (e.target.files?.[0]) {
+                                        handleFileChange(e.target.files[0])
+                                    }
+                                }}
                             />
                             <div className="flex-grow">
                                 <label className="block font-medium" htmlFor="caption">
@@ -157,12 +199,22 @@ const Upload: NextPage = () => {
                                 </label>
                                 <input
                                     id="caption"
-                                    type="text"
+                                    type="text" value={inputValue} onChange={(e) => {
+                                        if (!isLoading) setInputValue(e.target.value);
+                                    }}
                                     className="p-2 w-full border border-gray-2 mt-1 mb-3 outline-none focus:border-gray-400 transition"
                                 />
                                 <p className="font-medium">Cover</p>
                                 <div className="p-2 border border-gray-2 h-[170px] mb-2">
-
+                                    {coverImageURL ? (
+                                        <img
+                                            className="h-full w-auto object-contain"
+                                            src={coverImageURL}
+                                            alt=""
+                                        />
+                                    ) : (
+                                        <div className="bg-gray-1 h-full w-[100px]"></div>
+                                    )}
                                 </div>
                                 <div className="flex flex-wrap gap-3">
                                     <button
