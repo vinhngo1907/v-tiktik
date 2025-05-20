@@ -15,7 +15,9 @@ import toast from "react-hot-toast";
 const UserProfile: NextPage<UserProfileProps> = ({ user }) => {
     const session = useSession();
     const followMution = trpc.useMutation("follow.toggle");
+    
     const [isCurrentlyFollowed, setIsCurrentlyFollowed] = useState(user?.followedByMe!);
+
     const toggleFollow = () => {
         if (!session.data?.user) {
             toast("You need to login");

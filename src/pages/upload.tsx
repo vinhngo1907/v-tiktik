@@ -1,5 +1,6 @@
 import Navbar from "@/components/Layout/Navbar";
 import Meta from "@/components/Shared/Meta";
+import { fetchWithProgress } from "@/utils/fetch";
 import { trpc } from "@/utils/trpc";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -82,7 +83,7 @@ const Upload: NextPage = () => {
         video.load();
     }
 
-    const handleUploadFile = () => {
+    const handleUploadFile = async () => {
         if (!coverImageURL ||
             !videoFile ||
             !videoURL ||
@@ -95,6 +96,48 @@ const Upload: NextPage = () => {
 
         const toastID = toast.loading("Uploading...");
         try {
+            // uploaded video
+            const uploadedVideo = await (
+                await fetchWithProgress("POST", new URL(
+                    "/upload?fileName=video.mp4",
+                    process.env.NEXT_PUBLIC_UPLOAD_URL!
+                ).href, videoFile, (percentage) => {
+                    toast.loading(`Uploading ${percentage}%...`, { id: toastID });
+                })
+            ).url;
+
+            toast.loading("Uploading cover image...", { id: toastID });
+            
+            // uploaded cover
+            const coverBlob = await (await fetch(coverImageURL)).blob();
+            const formData = new FormData();
+            formData.append("file", coverBlob, "cover.png");
+            formData.append("content", "Form webhook");
+
+            const uploadedCover = (
+                await (
+                    await fetch(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_URL!, {
+                        method: "POST",
+                        body: formData,
+                    })
+                ).json()
+            ).attachments[0].proxy_url;
+
+            toast.loading("Uploading metadata...", { id: toastID });
+
+            const created = await uploadMutation.mutateAsync({
+                caption: inputValue.trim(),
+                coverURL: uploadedCover,
+                videoURL: uploadedVideo,
+                videoHeight,
+                videoWidth,
+            });
+            
+            toast.dismiss(toastID);
+            
+            setIsLoading(false);
+            
+            router.push(`/video/${created.id}`);
 
         } catch (error: any) {
             console.log(error);
