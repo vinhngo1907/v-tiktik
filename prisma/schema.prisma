@@ -93,6 +93,7 @@ model Comment {
   id        String   @id @default(cuid())
   videoId   String
   userId    String
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)

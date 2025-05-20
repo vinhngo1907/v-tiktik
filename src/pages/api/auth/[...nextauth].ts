@@ -30,8 +30,8 @@ export const authOptions: NextAuthOptions = {
                 // @ts-ignore
                 session.user.id = token.uid;
             }
-            // return session;
-            return Promise.resolve(session)
+            return session;
+            // return Promise.resolve(session);
         },
         jwt: async ({ user, token }) => {
             if (user) {
