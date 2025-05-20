@@ -56,6 +56,7 @@ const UserProfile: NextPage<UserProfileProps> = ({ user }) => {
                                 <h1 className="test-3xl font-semibold">{formatAccountName(user?.name!)}</h1>
                                 <p className="text-lg mt-2">{user?.name!}</p>
                                 {
+                                    //@ts-ignore
                                     user?.id !== session.data?.user?.id && (
                                         <div className="flex-shrink-0">
                                             <button
@@ -104,7 +105,9 @@ export const getServerSideProps = async ({ params, req, res }: GetServerSideProp
     try {
         const id = params?.id as string;
         if (!id) throw new Error();
+
         const session = (await getServerSession(req, res, authOptions)) as any;
+
         const [user, followInfo] = await Promise.all([
             prisma.user.findFirstOrThrow({
                 where: { id },
