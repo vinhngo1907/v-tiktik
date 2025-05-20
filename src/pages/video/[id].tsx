@@ -23,6 +23,7 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
     const router = useRouter();
     const likeMutation = trpc.useMutation("like.toggle");
     const followMutation = trpc.useMutation("follow.toggle");
+    const commentMutation = trpc.useMutation("comment.post");
 
     const [isBackButtonVisible, setIsBackButtonVisible] = useState(false);
     const [inputValue, setInputValue] = useState("");
@@ -194,7 +195,7 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
                                         <FaCommentDots className="w-5 h-5 scale-x-[-1]" />
                                     </button>
                                     <p className="text-center text-xs font-semibold">
-                                        {/* {formatNumber(commentsQuery.data?.length || 0)} */}
+                                        {formatNumber(commentsQuery.data?.length || 0)}
                                     </p>
                                 </div>
                             </div>
