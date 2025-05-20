@@ -81,7 +81,12 @@ export const getServerSideProps = async ({ req, res, query }: GetServerSideProps
             ? prisma.follow.findMany({
                 where: {
                     //@ts-ignore
-                    followerId: session?.user?.id!,
+                    followerId: session?.user?.id,
+                },
+                select: {
+                    following: {
+                        select: { id: true, name: true, image: true }
+                    }
                 }
             })
             : Promise.resolve([]),
