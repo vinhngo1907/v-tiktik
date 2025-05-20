@@ -7,7 +7,7 @@ const NotFound: NextPage = () => {
     return (
         <>
             <Meta
-                title="Not Found | TopTop"
+                title="Not Found | BuzzTime"
                 description="Not Found"
                 image="/favicon.png"
             />

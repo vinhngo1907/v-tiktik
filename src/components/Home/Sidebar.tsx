@@ -138,7 +138,7 @@ const Sidebar: FC<SidebarProps> = ({
                     <p>Creator Portal</p>
                     <p>Community Guidelines</p>
                 </div>
-                <span>© 2022 TopTop</span>
+                <span>© 2022 BuzzTime</span>
             </div>
         </div>
     );

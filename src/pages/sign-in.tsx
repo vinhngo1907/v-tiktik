@@ -45,7 +45,7 @@ const SignIn: NextPage = () => {
 
     return (
         <>
-            <Meta title="Log in | TopTop" description="Log in" image="/favicon.png" />
+            <Meta title="Log in | BuzzTime" description="Log in" image="/favicon.png" />
             <div className="min-h-screen flex flex-col items-stretch">
                 <Navbar />
                 <div className="flex-grow flex flex-col justify-center items-center gap-3">
