@@ -128,17 +128,14 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
                                 } block bg-[#3D3C3D] rounded-md overflow-hidden flex-grow h-auto md:flex-grow-0`}
                         >
                             <VideoPlayer
-                            // src={video.videoURL}
-                            // poster={video.coverURL}
+                                src={video.videoURL}
+                                poster={video.coverURL}
                             ></VideoPlayer>
                         </a>
                     </Link>
                     <div className="flex flex-col gap-1 lg:gap-2">
-                        <button>
-                            <AiFillHeart
-                                className={`lg:w-7 lg:h-7 h-5 w-5 ${isCurrentlyLiked ? "fill-pink" : ""
-                                    }`}
-                            />
+                        <button onClick={() => toggleLike()}>
+                            <AiFillHeart className={`lg:w-7 lg:h-7 h-5 w-5 ${isCurrentlyLiked ? "fill-pink" : ""}`} />
                         </button>
                         <p className="text-center text-xs font-semibold">
                             {formatNumber(video._count.likes)}
