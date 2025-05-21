@@ -1,0 +1,47 @@
+version: '3.2'
+
+networks:
+  mongo:
+    driver: bridge
+  cms:
+    driver: bridge
+  client:
+    driver: bridge
+  server:
+    driver: bridge
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./storage:/data
+    environment:
+      - MINIO_ROOT_USER=henrydepchai
+      - MINIO_ROOT_PASSWORD=vodichtoanvutru
+    command: server --console-address ":9001" /data

@@ -1,11 +1,15 @@
-// import { Follow, Like } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import { createRouter } from "./context";
 import { Follow, Like } from "@prisma/client";
 
 export const videoRouter = createRouter()
+    .middleware(async ({ ctx, next }) => {
+        if (!ctx.session) {
+            throw new TRPCError({ code: "UNAUTHORIZED" });
+        }
+        return next();
+    })
     .query("for-you", {
         input: z.object({ cursor: z.number().nullish(), }),
         resolve: async ({ ctx: { prisma, session }, input }) => {
@@ -52,12 +56,7 @@ export const videoRouter = createRouter()
             };
         },
     })
-    .middleware(async ({ ctx, next }) => {
-        if (!ctx.session) {
-            throw new TRPCError({ code: "UNAUTHORIZED" });
-        }
-        return next();
-    }).query("following", {
+    .query("following", {
         input: z.object({
             cursor: z.number().nullish(),
         }),
@@ -116,21 +115,27 @@ export const videoRouter = createRouter()
             };
         },
     })
+
     .mutation("create", {
         input: z.object({
             caption: z.string(),
-            videoURL: z.string().url(),
-            coverURL: z.string().url(),
+            videoURL: z.string(),
+            coverURL: z.string(),
             videoWidth: z.number().gt(0),
             videoHeight: z.number().gt(0),
         }),
-        async resolve({ ctx: { prisma, session }, input }) {
-            const created = await prisma.video.create({
+        resolve: async ({ ctx: { prisma, session }, input }) => {
+            const createdVideo = await prisma.video.create({
                 data: {
-                    ...input,
+                    caption: input.caption,
+                    videoURL: input.videoURL,
+                    coverURL: input.coverURL,
+                    videoHeight: input.videoHeight,
+                    videoWidth: input.videoWidth,
                     userId: session?.user?.id!,
-                },
+                }
             });
-            return created;
-        }
+
+            return createdVideo;
+        },
     });
