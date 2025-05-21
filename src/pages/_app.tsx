@@ -25,7 +25,6 @@ const MyApp: AppType = ({
             <Toaster />
             <NextNProgress color="#FE2C55" options={{ showSpinner: false }} />
             <SessionProvider session={session}>
-                <Component {...pageProps} />
                 <VolumeContextProvider>
                     <Component {...pageProps} />
                 </VolumeContextProvider>

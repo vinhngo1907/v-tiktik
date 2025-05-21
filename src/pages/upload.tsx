@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { DragEventHandler, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { BsFillCloudUploadFill } from "react-icons/bs";
+import { Buffer } from "buffer";
 
 const Upload: NextPage = () => {
     const router = useRouter();
@@ -22,6 +23,8 @@ const Upload: NextPage = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isFileDragging, setIsFileDragging] = useState(false);
+    const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
+
 
     useEffect(() => {
         if (uploadMutation.error) {
@@ -31,12 +34,15 @@ const Upload: NextPage = () => {
         }
 
     }, [uploadMutation.error])
+
+
     const handleFileChange = (file: File) => {
         if (!file.type.startsWith("video")) {
-            toast.error("Only video file is allowed!");
+            toast("Only video file is allowed");
             return;
         }
 
+        // Max 200MB file size
         if (file.size > 209715200) {
             toast("Max 200MB file size");
             return;
@@ -55,11 +61,10 @@ const Upload: NextPage = () => {
         document.body.appendChild(video);
 
         video.setAttribute("src", url);
-
-        video.addEventListener("error", (error: any) => {
-            console.error(error);
+        video.addEventListener("error", (error) => {
+            console.log(error);
             document.body.removeChild(video);
-            toast.error("Failed to upload video", {
+            toast.error("Failed to load the video", {
                 position: "bottom-right",
             });
         });
@@ -81,73 +86,91 @@ const Upload: NextPage = () => {
             }, 300);
         });
         video.load();
+    };
+
+    function base64FromArrayBuffer(buffer?: ArrayBuffer) {
+        if (!buffer) return '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        let binary = '';
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]!);
+        }
+        return window.btoa(binary);
     }
 
     const handleUploadFile = async () => {
-        if (!coverImageURL ||
-            !videoFile ||
-            !videoURL ||
-            !inputValue.trim() ||
-            isLoading) {
-            return;
-        }
+        if (!coverImageURL || !videoFile || !videoURL || !inputValue.trim() || isLoading) return;
 
         setIsLoading(true);
-
         const toastID = toast.loading("Uploading...");
+
         try {
-            // uploaded video
-            const uploadedVideo = await (
-                await fetchWithProgress("POST", new URL(
-                    "/upload?fileName=video.mp4",
-                    process.env.NEXT_PUBLIC_UPLOAD_URL!
-                ).href, videoFile, (percentage) => {
-                    toast.loading(`Uploading ${percentage}%...`, { id: toastID });
-                })
-            ).url;
+            // === 1. Upload video to MinIO ===
+            const videoForm = new FormData();
+            const videoName = `${Date.now()}-${videoFile.name}`;
+            videoForm.append("file", videoFile, videoName);
 
-            toast.loading("Uploading cover image...", { id: toastID });
-            
-            // uploaded cover
-            const coverBlob = await (await fetch(coverImageURL)).blob();
-            const formData = new FormData();
-            formData.append("file", coverBlob, "cover.png");
-            formData.append("content", "Form webhook");
+            const videoRes = await fetch("/api/upload-to-minio", {
+                method: "POST",
+                body: videoForm,
+            });
 
-            const uploadedCover = (
-                await (
-                    await fetch(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_URL!, {
-                        method: "POST",
-                        body: formData,
-                    })
-                ).json()
-            ).attachments[0].proxy_url;
+            if (!videoRes.ok) throw new Error("Failed to upload video");
 
-            toast.loading("Uploading metadata...", { id: toastID });
+            // const { url: videoURLFromMinio } = await videoRes.json();
+
+            const resText = await videoRes.text();
+
+            if (!videoRes.ok) {
+                console.error("Upload failed:", resText);
+                throw new Error("Failed to upload video");
+            }
+
+            const videoData = JSON.parse(resText);
+            console.log("Upload video response:", videoData);
+
+            const videoURLFromMinio = videoData.url;
+
+
+            // === 2. Upload cover image ===
+            const coverBlob = await fetch(coverImageURL).then((res) => res.blob());
+            const coverForm = new FormData();
+            const coverName = `${Date.now()}-cover.png`;
+            coverForm.append("file", coverBlob, coverName);
+
+            const coverRes = await fetch("/api/upload-to-minio", {
+                method: "POST",
+                body: coverForm,
+            });
+
+            if (!coverRes.ok) throw new Error("Failed to upload cover");
+
+            const { url: coverURLFromMinio } = await coverRes.json();
+
+            // === 3. Send metadata to server ===
+            toast.loading("Saving metadata...", { id: toastID });
 
             const created = await uploadMutation.mutateAsync({
                 caption: inputValue.trim(),
-                coverURL: uploadedCover,
-                videoURL: uploadedVideo,
+                videoURL: videoURLFromMinio,
+                coverURL: coverURLFromMinio,
                 videoHeight,
                 videoWidth,
             });
-            
-            toast.dismiss(toastID);
-            
-            setIsLoading(false);
-            
-            router.push(`/video/${created.id}`);
 
-        } catch (error: any) {
-            console.log(error);
+            toast.dismiss(toastID);
+            setIsLoading(false);
+            router.push(`/video/${created.id}`);
+        } catch (err:any) {
+            console.error("Error: ", err.message);
             setIsLoading(false);
             toast.error("Failed to upload video", {
                 position: "bottom-right",
                 id: toastID,
             });
         }
-    }
+    };
 
     const dropFile = (e: any) => {
         e.preventDefault();
