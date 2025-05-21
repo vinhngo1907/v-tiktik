@@ -23,7 +23,7 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
     const router = useRouter();
     const likeMutation = trpc.useMutation("like.toggle");
     const followMutation = trpc.useMutation("follow.toggle");
-    const commentMutation = trpc.useMutation("comment.post");
+    const postCommentMutation = trpc.useMutation("comment.post");
 
     const [isBackButtonVisible, setIsBackButtonVisible] = useState(false);
     const [inputValue, setInputValue] = useState("");
@@ -45,7 +45,7 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
                 //@ts-ignore
                 videoId: video?.id!
             }).then(() => {
-                // likeCountQuery
+                likeCountQuery.refetch();
             }).catch((err: any) => {
                 console.log(err);
             });
@@ -71,6 +71,21 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
 
     const handlePostComment = (e: FormEvent) => {
         e.preventDefault();
+        if(postCommentMutation.isLoading || !inputValue.trim()){
+            return;
+        }
+
+        setInputValue("");
+
+        postCommentMutation.mutateAsync({
+            content: inputValue.trim(),
+            videoId: video?.id!,
+        }).then(() => {
+            commentsQuery.refetch();
+        }).catch(err => {
+            console.error(err);
+            toast.error("Post comment failed");
+        });
     }
 
     const likeCountQuery = trpc.useQuery(
@@ -81,6 +96,7 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
         ["comment.by-video", { videoID: video?.id! }],
         { initialData: video?.comments }
     )
+    
     if (!video) return <></>;
 
     return (
@@ -297,16 +313,16 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                         />
-                        {/* <button
+                        <button
                             disabled={postCommentMutation.isLoading || !inputValue.trim()}
                             type="submit"
                             className={`transition ${postCommentMutation.isLoading || !inputValue.trim()
-                                    ? ""
-                                    : "text-pink"
+                                ? ""
+                                : "text-pink"
                                 }`}
                         >
                             {postCommentMutation.isLoading ? "Posting..." : "Post"}
-                        </button> */}
+                        </button>
                     </form>
                 </div>
             </div>

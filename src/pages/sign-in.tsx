@@ -62,12 +62,12 @@ const SignIn: NextPage = () => {
                         <span>Continue with Google</span>
                         <FcGoogle className="absolute top-1/2 -translate-y-1/2 left-3 w-6 h-6" />
                     </button>
-                    <button onClick={() => handleSignIn("facebook")}
+                    {/* <button onClick={() => handleSignIn("facebook")}
                         className="w-[95vw] max-w-[375px] flex justify-center items-center relative border border-gray-200 hover:border-gray-400 transition h-11"
                     >
-                        <span>Continue with Google</span>
+                        <span>Continue with Facebook</span>
                         <BsFacebook className="absolute top-1/2 -translate-y-1/2 left-3 w-6 h-6 fill-[#0A80EC]" />
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </>
