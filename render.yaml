@@ -4,13 +4,8 @@ services:
     env: docker
     dockerfilePath: ./Dockerfile.minio
     plan: free
-    autoDeploy: true
-    healthCheckPath: /
     envVars:
       - key: MINIO_ROOT_USER
-        value: minioadmin
+        value: henrydepchai
       - key: MINIO_ROOT_PASSWORD
-        value: minioadmin123
-    ports:
-      - port: 9000
-        protocol: tcp
+        value: vodichtoanvutru
