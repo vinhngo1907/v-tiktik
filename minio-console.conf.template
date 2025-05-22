@@ -72,6 +72,7 @@ server {
 		chunked_transfer_encoding off;
 
 		#proxy_pass http://minio_console; # This uses the upstream directive definition to load balance
-		proxy_pass https://minio_storage-i82h.onrender.com/;
+		#proxy_pass https://minio_storage-i82h.onrender.com/;
+		proxy_pass http://minio_storage-i82h.onrender.com:9090/;
 	}
 }
