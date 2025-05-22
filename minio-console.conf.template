@@ -1,23 +1,57 @@
+# upstream minio_console {
+#     server minio-storage-i82h.onrender.com:443;
+# }
+
+# server {
+#     listen 80;
+#     server_name minio-storage-i82h.onrender.com;
+#     location / {
+#         # proxy_pass https://minio_console;
+#         # proxy_pass http://minio-storage-i82h.onrender.com:9000/;
+#         proxy_pass http://localhost:9000/;
+
+#         # proxy_set_header Host $host;
+#         proxy_set_header Host minio-storage-i82h.onrender.com;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+
+#         proxy_ssl_server_name on;  # Enable SNI for SSL
+#         proxy_ssl_name minio-storage-i82h.onrender.com;
+
+#         proxy_connect_timeout 300;
+
+#         proxy_http_version 1.1;
+#         proxy_set_header Upgrade $http_upgrade;
+#         proxy_set_header Connection "upgrade";
+
+#         proxy_buffering off;
+#         proxy_request_buffering off;
+
+#         chunked_transfer_encoding off;
+#     }
+# }
+
 upstream minio_console {
-    server minio-storage-i82h.onrender.com:443;
+    server minio-storage-i82h.onrender.com:9090;
 }
 
 server {
-    listen 80;
-    server_name minio-storage-i82h.onrender.com;
-    location / {
-        # proxy_pass https://minio_console;
-        # proxy_pass http://minio-storage-i82h.onrender.com:9000/;
-        proxy_pass http://localhost:9000/;
+    listen 10000;
 
-        # proxy_set_header Host $host;
-        proxy_set_header Host minio-storage-i82h.onrender.com;
+    ignore_invalid_headers off;
+    client_max_body_size 0;
+    proxy_buffering off;
+    proxy_request_buffering off;
+
+    location / {
+        proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-NginX-Proxy true;
 
-        proxy_ssl_server_name on;  # Enable SNI for SSL
-        proxy_ssl_name minio-storage-i82h.onrender.com;
+        real_ip_header X-Real-IP;
 
         proxy_connect_timeout 300;
 
@@ -25,9 +59,8 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
 
-        proxy_buffering off;
-        proxy_request_buffering off;
-
         chunked_transfer_encoding off;
+
+        proxy_pass http://minio_console;
     }
 }
