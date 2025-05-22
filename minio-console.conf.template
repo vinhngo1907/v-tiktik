@@ -6,10 +6,11 @@ server {
     listen 9000;
 
     location / {
-        proxy_pass https://minio_console;
+        # proxy_pass https://minio_console;
+        proxy_pass http://minio-storage-i82h.onrender.com:9000/;
 
-        # proxy_set_header Host $host;
-        proxy_set_header Host minio-storage-i82h.onrender.com;
+        proxy_set_header Host $host;
+        # proxy_set_header Host minio-storage-i82h.onrender.com;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
