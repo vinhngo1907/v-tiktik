@@ -5,11 +5,11 @@
 FROM nginx:stable-alpine
 
 # Copy template config
-COPY nginx/minio.template.conf /etc/nginx/templates/minio.template.conf
+COPY nginx/minio-console.conf /etc/nginx/templates/minio-console.conf
 
 # Install envsubst
 RUN apk add --no-cache gettext
 
 # Run envsubst and start nginx
 CMD ["/bin/sh", "-c", \
-  "envsubst < /etc/nginx/templates/minio.template.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+  "envsubst < /etc/nginx/templates/minio-console.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
