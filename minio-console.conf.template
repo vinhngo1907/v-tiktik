@@ -33,11 +33,12 @@
 # }
 
 upstream minio_console {
-	server ${MINIO_HOST}:${MINIO_CONSOLE_PORT};
+	#server ${MINIO_HOST}:${MINIO_CONSOLE_PORT};
+	server minio-server:9090;
 }
 
 server {
-	listen ${PORT};
+	listen 10000;
 
 	# Allow special characters in headers
 	ignore_invalid_headers off;
