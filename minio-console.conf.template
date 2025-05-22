@@ -34,7 +34,7 @@
 
 upstream minio_console {
 	#server ${MINIO_HOST}:${MINIO_CONSOLE_PORT};
-	server minio-storage-i82h.onrender.com:9090;
+	server server minio-storage-i82h.onrender.com:80;
 }
 
 server {
