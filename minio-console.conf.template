@@ -34,7 +34,7 @@
 
 upstream minio_console {
 	#server ${MINIO_HOST}:${MINIO_CONSOLE_PORT};
-	server minio-server:9090;
+	server minio-storage-i82h.onrender.com:9090;
 }
 
 server {
@@ -71,6 +71,7 @@ server {
 
 		chunked_transfer_encoding off;
 
-		proxy_pass http://minio_console; # This uses the upstream directive definition to load balance
+		#proxy_pass http://minio_console; # This uses the upstream directive definition to load balance
+		proxy_pass https://minio_storage-i82h.onrender.com/;
 	}
 }
