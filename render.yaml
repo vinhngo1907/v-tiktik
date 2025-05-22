@@ -1,13 +1,16 @@
 services:
-  - type: docker
+  - type: web
     name: minio-storage
     env: docker
     dockerfilePath: ./Dockerfile.minio
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: MINIO_ROOT_USER
+        value: minioadmin
+      - key: MINIO_ROOT_PASSWORD
+        value: minioadmin123
     ports:
       - port: 9000
         protocol: tcp
-    envVars:
-      - key: MINIO_ROOT_USER
-        value: henrydepchai
-      - key: MINIO_ROOT_PASSWORD
-        value: vodichtoanvutru
