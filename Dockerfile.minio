@@ -5,11 +5,13 @@
 FROM nginx:stable-alpine
 
 # Copy template config
-COPY nginx/minio-console.conf /etc/nginx/templates/minio-console.conf
-
+# COPY nginx/minio-console.conf /etc/nginx/templates/minio-console.conf
+COPY minio-console.conf /etc/nginx/templates/
 # Install envsubst
 RUN apk add --no-cache gettext
 
 # Run envsubst and start nginx
-CMD ["/bin/sh", "-c", \
-  "envsubst < /etc/nginx/templates/minio-console.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+# CMD ["/bin/sh", "-c", \
+#   "envsubst < /etc/nginx/templates/minio-console.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+
+RUN rm /etc/nginx/conf.d/default.conf /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
