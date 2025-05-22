@@ -1,0 +1,13 @@
+services:
+  - type: docker
+    name: minio-storage
+    env: docker
+    dockerfilePath: ./Dockerfile.minio
+    ports:
+      - port: 9000
+        protocol: tcp
+    envVars:
+      - key: MINIO_ROOT_USER
+        value: henrydepchai
+      - key: MINIO_ROOT_PASSWORD
+        value: vodichtoanvutru

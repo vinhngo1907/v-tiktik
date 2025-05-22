@@ -1,0 +1,8 @@
+FROM minio/minio
+
+ENV MINIO_ROOT_USER=henrydepchai
+ENV MINIO_ROOT_PASSWORD=vodichtoanvutru
+
+EXPOSE 9000
+
+CMD ["server", "/data"]

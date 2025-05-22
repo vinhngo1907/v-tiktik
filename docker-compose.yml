@@ -1,38 +1,33 @@
 version: '3.2'
 
 networks:
-  mongo:
-    driver: bridge
-  cms:
-    driver: bridge
-  client:
-    driver: bridge
-  server:
-    driver: bridge
+  form_hub_network:
+    external: true
 
 services:
-  api:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./server
-    volumes:
-      - /app/node_modules
-      - ./server:/app
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - PGUSER=postgres
-      - PGHOST=postgres
-      - PGDATABASE=postgres
-      - PGPASSWORD=postgres_password
-      - PGPORT=5432
-  client:
+      POSTGRES_DB: tiktik
+      POSTGRES_HOST_AUTH_METHOD: trust
+    networks:
+      - form_hub_network
+  webapp:
     build:
-      dockerfile: Dockerfile.dev
-      context: ./client
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: "postgresql://postgres@postgres:5432/tiktik"
+      NODE_ENV: production
+    networks:
+      - form_hub_network
+  
   minio:
     image: minio/minio
     container_name: minio
