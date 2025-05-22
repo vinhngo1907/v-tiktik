@@ -3,7 +3,7 @@ upstream minio_console {
 }
 
 server {
-    listen 80;
+    listen 9000;
 
     location / {
         proxy_pass http://minio_console;
