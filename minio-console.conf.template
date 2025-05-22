@@ -1,5 +1,5 @@
 upstream minio_console {
-    server minio-console:9090;
+    server minio-storage-i82h.onrender.com;
 }
 
 server {
