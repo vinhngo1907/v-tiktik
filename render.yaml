@@ -25,32 +25,12 @@ services:
   - key: PORT
     value: 9000
   - key: CONSOLE_PORT
-    value: 9090
+    value: 9001
   # Uncomment the following key/value pair if you are removing the
   # 'minio-console' web service
   # - key: MINIO_BROWSER
   #   value: "off"
   
-
-# - type: web
-#   name: minio-console
-#   runtime: docker
-#   dockerContext: /
-#   dockerfilePath: ./Dockerfile.minio
-#   autoDeploy: false
-#   envVars:
-#   - key: PORT
-#     value: 10000
-#   - key: MINIO_HOST
-#     fromService:
-#       name: minio-server
-#       type: web
-#       property: host
-#   - key: MINIO_CONSOLE_PORT
-#     fromService:
-#       name: minio-server
-#       type: web
-#       envVarKey: CONSOLE_PORT
 
 - type: web
   name: minio-console
@@ -60,7 +40,7 @@ services:
   autoDeploy: false
   envVars:
   - key: PORT
-    value: 80   # hoặc 443 nếu bạn config HTTPS
+    value: 9001
   - key: MINIO_HOST
     fromService:
       name: minio-server
