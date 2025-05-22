@@ -7,8 +7,8 @@ server {
     server_name minio-storage-i82h.onrender.com;
     location / {
         # proxy_pass https://minio_console;
-        proxy_pass http://minio-storage-i82h.onrender.com:9000/;
-        # proxy_pass http://localhost:9000/;
+        #proxy_pass http://minio-storage-i82h.onrender.com:9000/;
+        proxy_pass http://localhost:9000/;
 
         # proxy_set_header Host $host;
         proxy_set_header Host minio-storage-i82h.onrender.com;
